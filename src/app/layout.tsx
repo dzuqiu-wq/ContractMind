@@ -4,14 +4,14 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const notoSansSC = Noto_Sans_SC({ 
-  subsets: ["latin", "cyrillic", "greek"],
+  subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
   variable: "--font-noto-sc"
 });
 
 export const metadata: Metadata = {
-  title: "ContractMind - AI合同风险审查",
-  description: "上传合同，AI智能分析风险条款，识别潜在法律风险",
+  title: "ContractMind - AI Contract Risk Review",
+  description: "Upload your contract and get AI-powered risk analysis in minutes. AI智能合同风险审查",
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
-      <body className={`${inter.variable} ${notoSansSC.variable} font-sans`}>
+      <body className={`${inter.variable} ${notoSansSC.variable}`}>
         {children}
       </body>
     </html>
