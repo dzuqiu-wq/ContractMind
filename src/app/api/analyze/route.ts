@@ -1,4 +1,4 @@
-ï»¿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { parseFile } from "@/lib/parser";
 import { classifyContract } from "@/lib/classifier";
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const { review_id } = await request.json();
 
     if (!review_id) {
-      return NextResponse.json({ error: "ç¼ºå°‘ review_id" }, { status: 400 });
+      return NextResponse.json({ error: "È±ÉÙ review_id" }, { status: 400 });
     }
 
     const review = await prisma.review.findUnique({
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!review) {
-      return NextResponse.json({ error: "å®¡æŸ¥è®°å½•ä¸å­˜åœ¨" }, { status: 404 });
+      return NextResponse.json({ error: "Éó²é¼ÇÂ¼²»´æÔÚ" }, { status: 404 });
     }
 
     await prisma.review.update({
@@ -28,29 +28,30 @@ export async function POST(request: NextRequest) {
       data: { status: "processing" },
     });
 
-    // è§£ææ–‡ä»¶
+    // ½âÎöÎÄ¼ş
     const buffer = await fs.readFile(review.filePath);
     const mimeType = review.fileName.endsWith(".pdf")
       ? "application/pdf"
       : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-    const parseResult = await parseFile(buffer, mimeType);
+    // ĞŞ¸´: parseFile ÏÖÔÚĞèÒª fileName ²ÎÊı
+    const parseResult = await parseFile(buffer, review.fileName, mimeType);
     const text = parseResult.text;
 
-    // åˆ†ç±»åˆåŒ
+    // ·ÖÀàºÏÍ¬
     const classification = await classifyContract(text);
     const contractType = classification.type;
 
-    // åˆ‡åˆ†æ¡æ¬¾
+    // ÇĞ·ÖÌõ¿î
     const clauses = splitClauses(text);
 
-    // åˆ†ææ¯ä¸ªæ¡æ¬¾
+    // ·ÖÎöÃ¿¸öÌõ¿î
     const analysisResult = await analyzeContract(clauses, contractType);
 
-    // è®¡ç®—é£é™©è¯„åˆ†
+    // ¼ÆËã·çÏÕÆÀ·Ö
     const scoreResult = calculateScore(analysisResult.issues);
 
-    // ä¿å­˜ç»“æœ
+    // ±£´æ½á¹û
     const reportData = {
       contract_type: contractType,
       overall_score: scoreResult.overall_score,
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
       summary: scoreResult.breakdown,
       clauses: analysisResult.clauses,
       issues: analysisResult.issues,
+      metadata: parseResult.metadata,
     };
 
     await prisma.review.update({
@@ -74,9 +76,12 @@ export async function POST(request: NextRequest) {
       success: true,
       status: "completed",
       report_id: review_id,
+      risk_level: scoreResult.risk_level,
+      risk_score: scoreResult.overall_score,
+      issue_count: analysisResult.issues.length,
     });
   } catch (error) {
     console.error("Analyze error:", error);
-    return NextResponse.json({ error: "åˆ†æå¤±è´¥" }, { status: 500 });
+    return NextResponse.json({ error: "·ÖÎöÊ§°Ü" }, { status: 500 });
   }
 }
