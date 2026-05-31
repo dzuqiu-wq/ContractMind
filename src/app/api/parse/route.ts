@@ -1,6 +1,6 @@
 /**
- * ºÏÍ¬½âÎö²âÊÔ API
- * POST /api/parse - ½âÎöÉÏ´«µÄÎÄ¼þ
+ * ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ API
+ * POST /api/parse - ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const file = formData.get("file") as File;
 
     if (!file) {
-      return NextResponse.json({ error: "ÇëÉÏ´«ÎÄ¼þ" }, { status: 400 });
+      return NextResponse.json({ error: "ï¿½ï¿½ï¿½Ï´ï¿½ï¿½Ä¼ï¿½" }, { status: 400 });
     }
 
     const allowedTypes = [
@@ -20,11 +20,11 @@ export async function POST(request: NextRequest) {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: "Ö»Ö§³Ö PDF ºÍ DOCX" }, { status: 400 });
+      return NextResponse.json({ error: "Ö»Ö§ï¿½ï¿½ PDF ï¿½ï¿½ DOCX" }, { status: 400 });
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: "ÎÄ¼þ²»ÄÜ³¬¹ý 10MB" }, { status: 400 });
+      return NextResponse.json({ error: "ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ü³ï¿½ï¿½ï¿½ 10MB" }, { status: 400 });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Parse error:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "½âÎöÊ§°Ü" },
+      { error: error instanceof Error ? error.message : "ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½" },
       { status: 500 }
     );
   }

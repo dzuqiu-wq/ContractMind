@@ -1,6 +1,6 @@
 /**
- * ºÏÍ¬½âÎöÄ£¿é
- * Ö§³Ö PDF ºÍ DOCX ÎÄ¼þ½âÎö
+ * ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+ * Ö§ï¿½ï¿½ PDF ï¿½ï¿½ DOCX ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 
 export interface ParseResult {
@@ -13,8 +13,8 @@ export interface ParseResult {
     file_name: string;
     mime_type: string;
     extract_date: string;
-    quality_score: number; // 0-100 ÎÄ±¾ÖÊÁ¿ÆÀ·Ö
-    is_scanned: boolean;    // ÊÇ·ñÎªÉ¨Ãè¼þ
+    quality_score: number; // 0-100 ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    is_scanned: boolean;    // ï¿½Ç·ï¿½ÎªÉ¨ï¿½ï¿½ï¿½
   };
 }
 
@@ -25,49 +25,49 @@ export interface ParsedContract {
 }
 
 /**
- * ÇåÀíÎÄ±¾£ºÈ¥³ý¶àÓà¿Õ°×¡¢¹æ·¶»¯¸ñÊ½
+ * ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ°×¡ï¿½ï¿½æ·¶ï¿½ï¿½ï¿½ï¿½Ê½
  */
 function cleanText(text: string): string {
   return text
-    // È¥³ý·Ç´òÓ¡×Ö·û
+    // È¥ï¿½ï¿½ï¿½Ç´ï¿½Ó¡ï¿½Ö·ï¿½
     .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "")
-    // ¹æ·¶»¯»»ÐÐ·û
+    // ï¿½æ·¶ï¿½ï¿½ï¿½ï¿½ï¿½Ð·ï¿½
     .replace(/\r\n/g, "\n")
     .replace(/\r/g, "\n")
-    // È¥³ýÁ¬ÐøµÄ¿Õ°××Ö·û£¨±£Áô»»ÐÐ£©
+    // È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿Õ°ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n[ \t]+/g, "\n")
-    // È¥³ýÁ¬Ðø¿ÕÐÐ£¨±£Áô×î¶à2¸ö»»ÐÐ£©
+    // È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½
     .replace(/\n{3,}/g, "\n\n")
-    // ¹æ·¶»¯ÒýºÅ
+    // ï¿½æ·¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     .replace(/[""]/g, '"')
     .replace(/['']/g, "'")
-    // ¹æ·¶»¯ÆÆÕÛºÅ
-    .replace(/¡ª/g, "-")
-    .replace(/¨C/g, "-")
-    // È¥³ýÊ×Î²¿Õ°×
+    // ï¿½æ·¶ï¿½ï¿½ï¿½ï¿½ï¿½Ûºï¿½
+    .replace(/ï¿½ï¿½/g, "-")
+    .replace(/ï¿½C/g, "-")
+    // È¥ï¿½ï¿½ï¿½ï¿½Î²ï¿½Õ°ï¿½
     .trim();
 }
 
 /**
- * ÆÀ¹ÀÎÄ±¾ÖÊÁ¿
+ * ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 function assessQuality(text: string): { score: number; isScanned: boolean } {
   const lines = text.split("\n").filter(l => l.trim().length > 0);
   
-  // ¼ì²éÊÇ·ñÊÇÉ¨Ãè¼þ£¨ÎÄ±¾»ìÂÒ¡¢ÎÞÓÐÐ§ÐÐ£©
+  // ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½É¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Ð£ï¿½
   const avgLineLength = lines.reduce((sum, l) => sum + l.length, 0) / Math.max(lines.length, 1);
   const hasReasonableLength = avgLineLength > 10 && avgLineLength < 200;
   
-  // ¼ì²éÂÒÂë±ÈÀý
+  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   const garbledRatio = (text.match(/[?]/g) || []).length / Math.max(text.length, 1);
   const hasGarbled = garbledRatio > 0.01;
   
-  // ¼ì²éÓÐÐ§×Ö·û±ÈÀý
-  const validChars = text.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s.,;:!?¡££¬£»£º£¡£¿""''£¨£©¡¾¡¿¡¶¡·\-]/g, "").length;
+  // ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
+  const validChars = text.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s.,;:!?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½""''ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\-]/g, "").length;
   const validRatio = validChars / Math.max(text.length, 1);
   
-  // ×ÛºÏÆÀ·Ö
+  // ï¿½Ûºï¿½ï¿½ï¿½ï¿½ï¿½
   let score = 50;
   if (hasReasonableLength) score += 20;
   if (!hasGarbled) score += 20;
@@ -80,17 +80,17 @@ function assessQuality(text: string): { score: number; isScanned: boolean } {
 }
 
 /**
- * ¹ÀËãÖÐÎÄ×Ö·ûÊý£¨ÓÃÓÚ token ¹ÀËã£©
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ token ï¿½ï¿½ï¿½ã£©
  */
 function estimateChineseChars(text: string): number {
   const chineseChars = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
   const otherChars = text.length - chineseChars;
-  // ÖÐÎÄ°´2¸ö×Ö·û¹ÀËã£¨LLM token ¿¼Á¿£©
+  // ï¿½ï¿½ï¿½Ä°ï¿½2ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ã£¨LLM token ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   return chineseChars * 2 + otherChars;
 }
 
 /**
- * ½âÎöÎÄ¼þ
+ * ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
  */
 export async function parseFile(
   buffer: Buffer,
@@ -103,12 +103,12 @@ export async function parseFile(
     case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
       return parseDOCX(buffer, fileName, mimeType);
     default:
-      throw new Error(`²»Ö§³ÖµÄÎÄ¼þ¸ñÊ½: ${mimeType}`);
+      throw new Error(`ï¿½ï¿½Ö§ï¿½Öµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ê½: ${mimeType}`);
   }
 }
 
 /**
- * ½âÎö PDF
+ * ï¿½ï¿½ï¿½ï¿½ PDF
  */
 async function parsePDF(
   buffer: Buffer,
@@ -138,13 +138,13 @@ async function parsePDF(
       },
     };
   } catch (error) {
-    console.error("PDF ½âÎöÊ§°Ü:", error);
-    throw new Error(`PDF ½âÎöÊ§°Ü: ${error instanceof Error ? error.message : "Î´Öª´íÎó"}`);
+    console.error("PDF ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½:", error);
+    throw new Error(`PDF ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½: ${error instanceof Error ? error.message : "Î´Öªï¿½ï¿½ï¿½ï¿½"}`);
   }
 }
 
 /**
- * ½âÎö DOCX
+ * ï¿½ï¿½ï¿½ï¿½ DOCX
  */
 async function parseDOCX(
   buffer: Buffer,
@@ -156,7 +156,7 @@ async function parseDOCX(
     const result = await mammoth.extractRawText({ buffer });
     
     if (result.messages && result.messages.length > 0) {
-      console.warn("DOCX ½âÎö¾¯¸æ:", result.messages);
+      console.warn("DOCX ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:", result.messages);
     }
     
     const rawText = result.value;
@@ -177,13 +177,13 @@ async function parseDOCX(
       },
     };
   } catch (error) {
-    console.error("DOCX ½âÎöÊ§°Ü:", error);
-    throw new Error(`DOCX ½âÎöÊ§°Ü: ${error instanceof Error ? error.message : "Î´Öª´íÎó"}`);
+    console.error("DOCX ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½:", error);
+    throw new Error(`DOCX ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½: ${error instanceof Error ? error.message : "Î´Öªï¿½ï¿½ï¿½ï¿½"}`);
   }
 }
 
 /**
- * ½âÎöÎÄ¼þ²¢·µ»ØÍêÕû½á¹¹£¨±ã½Ý·½·¨£©
+ * ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 export async function parseContract(
   buffer: Buffer,

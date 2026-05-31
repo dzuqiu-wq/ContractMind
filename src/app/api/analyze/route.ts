@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const { review_id } = await request.json();
 
     if (!review_id) {
-      return NextResponse.json({ error: "È±ÉÙ review_id" }, { status: 400 });
+      return NextResponse.json({ error: "È±ï¿½ï¿½ review_id" }, { status: 400 });
     }
 
     const review = await prisma.review.findUnique({
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!review) {
-      return NextResponse.json({ error: "Éó²é¼ÇÂ¼²»´æÔÚ" }, { status: 404 });
+      return NextResponse.json({ error: "ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" }, { status: 404 });
     }
 
     await prisma.review.update({
@@ -28,30 +28,30 @@ export async function POST(request: NextRequest) {
       data: { status: "processing" },
     });
 
-    // ½âÎöÎÄ¼þ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
     const buffer = await fs.readFile(review.filePath);
     const mimeType = review.fileName.endsWith(".pdf")
       ? "application/pdf"
       : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-    // ÐÞ¸´: parseFile ÏÖÔÚÐèÒª fileName ²ÎÊý
+    // ï¿½Þ¸ï¿½: parseFile ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òª fileName ï¿½ï¿½ï¿½ï¿½
     const parseResult = await parseFile(buffer, review.fileName, mimeType);
     const text = parseResult.text;
 
-    // ·ÖÀàºÏÍ¬
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Í¬
     const classification = await classifyContract(text);
     const contractType = classification.type;
 
-    // ÇÐ·ÖÌõ¿î
+    // ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½
     const clauses = splitClauses(text);
 
-    // ·ÖÎöÃ¿¸öÌõ¿î
+    // ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     const analysisResult = await analyzeContract(clauses, contractType);
 
-    // ¼ÆËã·çÏÕÆÀ·Ö
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     const scoreResult = calculateScore(analysisResult.issues);
 
-    // ±£´æ½á¹û
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     const reportData = {
       contract_type: contractType,
       overall_score: scoreResult.overall_score,
@@ -82,6 +82,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Analyze error:", error);
-    return NextResponse.json({ error: "·ÖÎöÊ§°Ü" }, { status: 500 });
+    return NextResponse.json({ error: "ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½" }, { status: 500 });
   }
 }

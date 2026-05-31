@@ -1,4 +1,4 @@
-﻿export interface Clause {
+export interface Clause {
   index: number;
   title: string;
   content: string;

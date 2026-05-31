@@ -1,4 +1,4 @@
-﻿import OpenAI from "openai";
+import OpenAI from "openai";
 import { Clause } from "./splitter";
 
 const client = new OpenAI({
