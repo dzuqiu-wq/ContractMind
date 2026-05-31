@@ -40,7 +40,7 @@ export default function UploadPage() {
 
   const handleFile = async (selected: File) => {
     if (selected.size > 10 * 1024 * 1024) {
-      setError("ÎÄ¼þ´óÐ¡²»ÄÜ³¬¹ý 10MB");
+      setError("ï¿½Ä¼ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½Ü³ï¿½ï¿½ï¿½ 10MB");
       return;
     }
     
@@ -49,7 +49,7 @@ export default function UploadPage() {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ];
     if (!allowedTypes.includes(selected.type)) {
-      setError("Ö»Ö§³Ö PDF ºÍ DOCX ÎÄ¼þ");
+      setError("Ö»Ö§ï¿½ï¿½ PDF ï¿½ï¿½ DOCX ï¿½Ä¼ï¿½");
       return;
     }
     
@@ -57,7 +57,7 @@ export default function UploadPage() {
     setError("");
     setParsePreview(null);
     
-    // ×Ô¶¯½âÎöÔ¤ÀÀ
+    // ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½
     await previewParse(selected);
   };
 
@@ -108,7 +108,7 @@ export default function UploadPage() {
       const data = await res.json();
       
       if (!res.ok) {
-        throw new Error(data.error || "ÉÏ´«Ê§°Ü");
+        throw new Error(data.error || "ï¿½Ï´ï¿½Ê§ï¿½ï¿½");
       }
       
       const analyzeRes = await fetch("/api/analyze", {
@@ -122,7 +122,7 @@ export default function UploadPage() {
       if (analyzeRes.ok) {
         router.push("/report/" + data.review_id);
       } else {
-        throw new Error(analyzeData.error || "·ÖÎöÊ§°Ü");
+        throw new Error(analyzeData.error || "ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½");
       }
     } catch (err: any) {
       setError(err.message);
@@ -141,7 +141,7 @@ export default function UploadPage() {
       <header className="p-6 bg-white border-b">
         <div className="max-w-4xl mx-auto">
           <a href="/" className="text-primary-600 hover:underline font-medium">
-            ¡û ·µ»ØÊ×Ò³
+            ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³
           </a>
         </div>
       </header>
@@ -149,10 +149,10 @@ export default function UploadPage() {
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         <div className="max-w-xl w-full">
           <h1 className="text-3xl font-bold mb-2 text-center text-gray-900">
-            ÉÏ´«ºÏÍ¬
+            ï¿½Ï´ï¿½ï¿½ï¿½Í¬
           </h1>
           <p className="text-gray-600 text-center mb-8">
-            Ö§³Ö PDF »ò DOCX ¸ñÊ½£¬×î´ó 10MB
+            Ö§ï¿½ï¿½ PDF ï¿½ï¿½ DOCX ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ 10MB
           </p>
           
           <div
@@ -194,7 +194,7 @@ export default function UploadPage() {
                   }}
                   className="text-red-500 text-sm hover:text-red-600 font-medium"
                 >
-                  ÒÆ³ý
+                  ï¿½Æ³ï¿½
                 </button>
               </div>
             ) : (
@@ -204,10 +204,10 @@ export default function UploadPage() {
                 </div>
                 <div>
                   <p className="text-lg font-medium text-gray-700">
-                    ÍÏ×§ÎÄ¼þµ½´Ë´¦
+                    ï¿½ï¿½×§ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ë´ï¿½
                   </p>
                   <p className="text-gray-500 mt-1">
-                    »òµã»÷Ñ¡ÔñÎÄ¼þ
+                    ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½Ä¼ï¿½
                   </p>
                 </div>
                 <div className="flex gap-2 mt-4">
@@ -218,22 +218,22 @@ export default function UploadPage() {
             )}
           </div>
           
-          {/* ½âÎöÔ¤ÀÀ */}
+          {/* ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ */}
           {parsePreview && (
             <div className="mt-4 p-4 bg-gray-100 rounded-xl">
               <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-gray-700">½âÎöÔ¤ÀÀ</span>
+                <span className="font-medium text-gray-700">ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½</span>
                 <span className={`px-2 py-0.5 rounded text-sm ${
                   parsePreview.quality_score >= 70 ? "bg-green-100 text-green-700" :
                   parsePreview.quality_score >= 40 ? "bg-yellow-100 text-yellow-700" :
                   "bg-red-100 text-red-700"
                 }`}>
-                  ÖÊÁ¿: {parsePreview.quality_score}%
+                  ï¿½ï¿½ï¿½ï¿½: {parsePreview.quality_score}%
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-2">
-                <span>×Ö·ûÊý: {parsePreview.text_length}</span>
-                <span>´ÊÊý: {parsePreview.word_count}</span>
+                <span>ï¿½Ö·ï¿½ï¿½ï¿½: {parsePreview.text_length}</span>
+                <span>ï¿½ï¿½ï¿½ï¿½: {parsePreview.word_count}</span>
               </div>
               <p className="text-xs text-gray-500 truncate">
                 {parsePreview.preview}
@@ -243,7 +243,7 @@ export default function UploadPage() {
           
           {isParsing && (
             <div className="mt-4 p-4 bg-blue-50 rounded-xl text-center">
-              <span className="text-blue-600">ÕýÔÚ½âÎöÎÄ¼þ...</span>
+              <span className="text-blue-600">ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½...</span>
             </div>
           )}
           
@@ -258,17 +258,17 @@ export default function UploadPage() {
             disabled={!file || isUploading || isParsing}
             className="mt-8 w-full bg-primary-600 text-white text-lg py-4 rounded-xl font-medium hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
           >
-            {isUploading ? "ÉÏ´«²¢·ÖÎöÖÐ..." : "¿ªÊ¼·ÖÎö"}
+            {isUploading ? "ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½..." : "ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½"}
           </button>
           
           <div className="mt-6 text-center text-gray-500 text-sm">
-            <p>Ã¿ÌìÃâ·Ñ 3 ´ÎÉó²é</p>
+            <p>Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ 3 ï¿½ï¿½ï¿½ï¿½ï¿½</p>
           </div>
         </div>
       </div>
 
       <footer className="p-6 text-center text-gray-500 text-sm border-t bg-white">
-        <p>?? ±¾¹¤¾ß½öÌá¹©·çÏÕÌáÊ¾£¬²»¹¹³É·¨ÂÉÒâ¼û¡£</p>
+        <p>?? ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½á¹©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½</p>
       </footer>
     </main>
   );
