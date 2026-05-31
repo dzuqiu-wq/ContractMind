@@ -1,4 +1,4 @@
-ï»¿"use client";
+"use client";
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -6,6 +6,13 @@ import { useRouter } from "next/navigation";
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isParsing, setIsParsing] = useState(false);
+  const [parsePreview, setParsePreview] = useState<{
+    text_length: number;
+    word_count: number;
+    quality_score: number;
+    preview: string;
+  } | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -31,9 +38,9 @@ export default function UploadPage() {
     }
   };
 
-  const handleFile = (selected: File) => {
+  const handleFile = async (selected: File) => {
     if (selected.size > 10 * 1024 * 1024) {
-      setError("File size cannot exceed 10MB");
+      setError("ÎÄ¼þ´óÐ¡²»ÄÜ³¬¹ý 10MB");
       return;
     }
     
@@ -42,12 +49,38 @@ export default function UploadPage() {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ];
     if (!allowedTypes.includes(selected.type)) {
-      setError("Only PDF and DOCX files are supported");
+      setError("Ö»Ö§³Ö PDF ºÍ DOCX ÎÄ¼þ");
       return;
     }
     
     setFile(selected);
     setError("");
+    setParsePreview(null);
+    
+    // ×Ô¶¯½âÎöÔ¤ÀÀ
+    await previewParse(selected);
+  };
+
+  const previewParse = async (selected: File) => {
+    setIsParsing(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", selected);
+      
+      const res = await fetch("/api/parse", {
+        method: "POST",
+        body: formData,
+      });
+      
+      const data = await res.json();
+      if (res.ok) {
+        setParsePreview(data);
+      }
+    } catch (err) {
+      console.error("Preview parse error:", err);
+    } finally {
+      setIsParsing(false);
+    }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +108,7 @@ export default function UploadPage() {
       const data = await res.json();
       
       if (!res.ok) {
-        throw new Error(data.error || "Upload failed");
+        throw new Error(data.error || "ÉÏ´«Ê§°Ü");
       }
       
       const analyzeRes = await fetch("/api/analyze", {
@@ -89,7 +122,7 @@ export default function UploadPage() {
       if (analyzeRes.ok) {
         router.push("/report/" + data.review_id);
       } else {
-        throw new Error(analyzeData.error || "Analysis failed");
+        throw new Error(analyzeData.error || "·ÖÎöÊ§°Ü");
       }
     } catch (err: any) {
       setError(err.message);
@@ -108,7 +141,7 @@ export default function UploadPage() {
       <header className="p-6 bg-white border-b">
         <div className="max-w-4xl mx-auto">
           <a href="/" className="text-primary-600 hover:underline font-medium">
-            Back to Home
+            ¡û ·µ»ØÊ×Ò³
           </a>
         </div>
       </header>
@@ -116,10 +149,10 @@ export default function UploadPage() {
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         <div className="max-w-xl w-full">
           <h1 className="text-3xl font-bold mb-2 text-center text-gray-900">
-            Upload Contract
+            ÉÏ´«ºÏÍ¬
           </h1>
           <p className="text-gray-600 text-center mb-8">
-            PDF or DOCX, max 10MB
+            Ö§³Ö PDF »ò DOCX ¸ñÊ½£¬×î´ó 10MB
           </p>
           
           <div
@@ -146,7 +179,7 @@ export default function UploadPage() {
               <div className="flex flex-col items-center gap-3">
                 <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center">
                   <span className="text-3xl">
-                    {file.type === "application/pdf" ? "PDF" : "DOC"}
+                    {file.type === "application/pdf" ? "??" : "??"}
                   </span>
                 </div>
                 <div>
@@ -157,23 +190,24 @@ export default function UploadPage() {
                   onClick={(e) => {
                     e.stopPropagation();
                     setFile(null);
+                    setParsePreview(null);
                   }}
                   className="text-red-500 text-sm hover:text-red-600 font-medium"
                 >
-                  Remove
+                  ÒÆ³ý
                 </button>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-4">
                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
-                  <span className="text-4xl">Upload</span>
+                  <span className="text-4xl">??</span>
                 </div>
                 <div>
                   <p className="text-lg font-medium text-gray-700">
-                    Drag and drop your file here
+                    ÍÏ×§ÎÄ¼þµ½´Ë´¦
                   </p>
                   <p className="text-gray-500 mt-1">
-                    or click to browse
+                    »òµã»÷Ñ¡ÔñÎÄ¼þ
                   </p>
                 </div>
                 <div className="flex gap-2 mt-4">
@@ -184,6 +218,35 @@ export default function UploadPage() {
             )}
           </div>
           
+          {/* ½âÎöÔ¤ÀÀ */}
+          {parsePreview && (
+            <div className="mt-4 p-4 bg-gray-100 rounded-xl">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium text-gray-700">½âÎöÔ¤ÀÀ</span>
+                <span className={`px-2 py-0.5 rounded text-sm ${
+                  parsePreview.quality_score >= 70 ? "bg-green-100 text-green-700" :
+                  parsePreview.quality_score >= 40 ? "bg-yellow-100 text-yellow-700" :
+                  "bg-red-100 text-red-700"
+                }`}>
+                  ÖÊÁ¿: {parsePreview.quality_score}%
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-2">
+                <span>×Ö·ûÊý: {parsePreview.text_length}</span>
+                <span>´ÊÊý: {parsePreview.word_count}</span>
+              </div>
+              <p className="text-xs text-gray-500 truncate">
+                {parsePreview.preview}
+              </p>
+            </div>
+          )}
+          
+          {isParsing && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-xl text-center">
+              <span className="text-blue-600">ÕýÔÚ½âÎöÎÄ¼þ...</span>
+            </div>
+          )}
+          
           {error && (
             <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-red-600 text-sm text-center">{error}</p>
@@ -192,20 +255,20 @@ export default function UploadPage() {
           
           <button
             onClick={handleUpload}
-            disabled={!file || isUploading}
+            disabled={!file || isUploading || isParsing}
             className="mt-8 w-full bg-primary-600 text-white text-lg py-4 rounded-xl font-medium hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
           >
-            {isUploading ? "Uploading and analyzing..." : "Start Analysis"}
+            {isUploading ? "ÉÏ´«²¢·ÖÎöÖÐ..." : "¿ªÊ¼·ÖÎö"}
           </button>
           
           <div className="mt-6 text-center text-gray-500 text-sm">
-            <p>3 free reviews per day</p>
+            <p>Ã¿ÌìÃâ·Ñ 3 ´ÎÉó²é</p>
           </div>
         </div>
       </div>
 
       <footer className="p-6 text-center text-gray-500 text-sm border-t bg-white">
-        <p>This tool provides risk alerts only and does not constitute legal advice.</p>
+        <p>?? ±¾¹¤¾ß½öÌá¹©·çÏÕÌáÊ¾£¬²»¹¹³É·¨ÂÉÒâ¼û¡£</p>
       </footer>
     </main>
   );
