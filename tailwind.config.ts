@@ -1,4 +1,4 @@
-﻿import type { Config } from "tailwindcss";
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-noto-sc)", "var(--font-inter)", "system-ui", "sans-serif"],
+      },
       colors: {
         primary: {
           50: "#f0f9ff",
