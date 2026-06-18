@@ -1,4 +1,4 @@
-﻿import { Issue } from "./analyzer";
+import { Issue } from "./analyzer";
 
 export interface ScoreResult {
   overall_score: number;
